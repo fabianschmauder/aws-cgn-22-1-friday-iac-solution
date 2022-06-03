@@ -1,0 +1,25 @@
+name: Deploy with terraform
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  create-infrastructure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.7
+      - name: deploy web server infrastructure
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_REGION: eu-central-1
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
